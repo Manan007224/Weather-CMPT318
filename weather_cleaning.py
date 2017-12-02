@@ -7,6 +7,8 @@ import datetime
 import os
 import re
 import warnings
+import pdb
+
 warnings.filterwarnings('ignore')
 
 def gather_station_details(sample_filename) :
@@ -36,6 +38,8 @@ def gather_station_details(sample_filename) :
 
 def prepare_weather_data(WEATHER_DIR) :
 
+
+
     all_files = os.listdir(WEATHER_DIR)
     data = pd.DataFrame()
 
@@ -62,27 +66,13 @@ def to_datetime(row) :
 
 
 def year_specific(val) :
+    ## Function to extract samples with only given years.
     years = ['2016','2017']
     val = str(val)
     if val in years :
         return val
     else :
         return np.nan
-
-def prepare_and_clean_crime_data() :
-
-    filename = 'crime_csv_all_years.csv'
-    data = pd.read_csv(filename)
-
-
-
-    to_string = lambda x:str(x)
-
-    ## only data from 2016 and 2015
-    data['YEAR'] = data['YEAR'].apply(to_string)
-    data['YEAR'] = data['YEAR'].apply(year_specific)
-    data = data.dropna(axis=0,how='any')
-    return data
 
 def is_rain(val) :
     REGEX1 = '^.*Rain.*$'
@@ -118,7 +108,6 @@ def is_cloudy(val) :
     else :
         return 0
 
-
 def is_pellets(val) :
     if re.match('^.*Pellets.*$',str(val) ) is not None :
         return 1
@@ -147,13 +136,56 @@ def fix_weather_category(ndata) :
     ndata['is_fog'] = ndata['Weather'].apply(is_fog)
     ndata['is_cloudy'] = ndata['Weather'].apply(is_cloudy)
     ndata['is_pellets'] = ndata['Weather'].apply(is_pellets)
-
     ndata['is_rain'] = ndata['Weather'].apply(is_rain)
 
-    ldata = ndata[ndata['Weather'].isnull() == 0]
-    udata = ndata[ndata['Weather'].isnull() == 1]
+    return ndata
 
-    ldata['new_weather'] = ldata.apply(new_weather_label,axis=1)
+
+def prepare_and_clean_crime_data() :
+
+    filename = 'crime_csv_all_years.csv'
+    data = pd.read_csv(filename)
+    to_string = lambda x:str(x)
+
+    ## only data from 2016 and 2015
+    data['YEAR'] = data['YEAR'].apply(to_string)
+    data['YEAR'] = data['YEAR'].apply(year_specific)
+    data = data.dropna(axis=0,how='any')
+    #pdb.set_trace()
+    ## Adding the timestamp
+    data['date/time'] = data.apply(crime_datetime,axis=1)
+    data['timestamp'] = data['date/time'].values.astype(np.int64)
+    return data
+
+def crime_datetime(row) :
+    year = int(row['YEAR'])
+    month = int(row['MONTH'])
+    day = int(row['DAY'])
+    hour = int(row['HOUR'])
+    return datetime.datetime(year,month,day,hour,0,0)
+
+def image_datetime(row) :
+    year = int(row['year'])
+    month = int(row['month'])
+    day = int(row['day'])
+    hour = int(row['hour'])
+
+    return datetime.datetime(year,month,day,hour,0,0)
+
+def prepare_image_data(IMAGE_DIR) :
+
+
+    contents = os.listdir(IMAGE_DIR)
+    filenames = pd.DataFrame(contents,columns=['title'])
+
+
+    filenames['year'] = filenames['title'].str.extract('katkam-([0-9]{4}).*\.jpg')
+    filenames['month'] = filenames['title'].str.extract('katkam-[0-9]{4}([0-9]{2}).*\.jpg')
+    filenames['day'] = filenames['title'].str.extract('katkam-[0-9]{4}[0-9]{2}([0-9]{2}).*\.jpg')
+    filenames['hour'] = filenames['title'].str.extract('katkam-[0-9]{4}[0-9]{2}[0-9]{2}([0-9]{2}).*\.jpg')
+
+    filenames['timestamp'] = filenames.apply(image_datetime,axis=1)
+    return filenames
 
 
 
@@ -161,15 +193,41 @@ def main() :
 
     WEATHER_DIR = sys.argv[1]
 
-
     data = prepare_weather_data(WEATHER_DIR)
 
+    ## WEATHER DATA
     c = [i for i in data.columns if data.loc[:,i].count() != 0  and i!= 'Hmdx']
     ndata = data[c]
     ndata['Date/Time'] = ndata['Date/Time'].apply(to_datetime)
     ndata['timestamp'] = ndata['Date/Time'].values.astype(np.int64)
+    ndata = fix_weather_category(ndata)
 
+    # labeled data and unlabeled data {unlabeled where weather is Nan}
+    ldata = ndata[ndata['Weather'].isnull() == 0]
+    ldata['new_weather'] = ldata.apply(new_weather_label,axis=1)
+
+    udata = ndata[ndata['Weather'].isnull() == 1]
+
+    ## CRIME DATA
     cdata = prepare_and_clean_crime_data()
+
+    ## IMAGE DATA
+    IMAGE_DIR = 'image_data/katkam-scaled'
+    idata = prepare_image_data(IMAGE_DIR)
+
+    ## WEATHER AND CRIME DATA
+    wcdata = ldata.merge(cdata,on='timestamp')
+    #print(idata.head())
+
+    ## WEATHER AND IMAGE DATA
+    widata = ldata.merge(idata,on='timestamp')
+    print('full weather data:{}'.format(ndata['Date/Time'].count()))
+    print('labeled weather data:{}'.format(ldata['Date/Time'].count()))
+    print('unlabelled weather data:{}'.format(udata['Date/Time'].count()))
+    print('crime data:{}'.format(cdata['date/time'].count()))
+    print('image data:{}'.format(idata['title'].count()))
+    print('weather and crime data:{}'.format(wcdata['timestamp'].count()))
+    print('weather and image data:{}'.format(widata['timestamp'].count()))
 
 if __name__ == '__main__' :
     main()

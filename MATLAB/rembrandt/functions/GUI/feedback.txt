@@ -1,0 +1,12 @@
+GUI Feedback : 
+
+Bug Identification
+
+1. The name of the original should be made 
+2. If manual segmentation messes up, a way to restart it. 
+	2.1 Close the current manual_segmentation figure window using a button maybe Reset or Refresh.
+3 . After doing Manual, selecting regions, showing and finalizing. the images appears in Manual Window with arrows to select not finaalized. 
+The Problem : How to perform lab on them. Lab button is not responding.
+
+4. Have to provide enough documentation before each function in the GUI.
+5. Change the names of functions that it makes sense. 

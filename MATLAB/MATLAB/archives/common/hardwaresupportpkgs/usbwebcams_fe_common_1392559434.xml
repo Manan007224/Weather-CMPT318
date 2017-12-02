@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<componentData>
+  <component>
+    <componentBaseName>hardwaresupportpkgs/usbwebcams_fe</componentBaseName>
+    <componentFileName>hardwaresupportpkgs/usbwebcams_fe_common_1392559434.zip</componentFileName>
+    <componentName>hardwaresupportpkgs/usbwebcams_fe_common</componentName>
+    <componentVersion>1392559434</componentVersion>
+    <instrset>0</instrset>
+    <locale />
+    <locationId>1</locationId>
+    <numFiles>3</numFiles>
+    <platformList>
+      <platform>glnxa64</platform>
+      <platform>maci64</platform>
+      <platform>win64</platform>
+    </platformList>
+    <releaseFamily>R2016b</releaseFamily>
+    <size>530678</size>
+    <type />
+    <uncompressedBytes>532106</uncompressedBytes>
+  </component>
+</componentData>
+

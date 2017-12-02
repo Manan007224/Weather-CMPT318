@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import pdb
 
 WEATHER_DIR = './weather'
 
@@ -14,7 +15,6 @@ for weather_file in all_files :
 
         file_path = os.path.join(WEATHER_DIR,str(weather_file))
         wdata = pd.read_csv(str(file_path),skiprows=range(16))
-        
         data = data.append(wdata)
 
 print(data.shape)
