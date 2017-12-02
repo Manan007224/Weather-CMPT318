@@ -221,13 +221,18 @@ def main() :
 
     ## WEATHER AND IMAGE DATA
     widata = ldata.merge(idata,on='timestamp')
-    print('full weather data:{}'.format(ndata['Date/Time'].count()))
-    print('labeled weather data:{}'.format(ldata['Date/Time'].count()))
-    print('unlabelled weather data:{}'.format(udata['Date/Time'].count()))
-    print('crime data:{}'.format(cdata['date/time'].count()))
-    print('image data:{}'.format(idata['title'].count()))
-    print('weather and crime data:{}'.format(wcdata['timestamp'].count()))
-    print('weather and image data:{}'.format(widata['timestamp'].count()))
+
+    print(widata.head())
+    #print('full weather data:{}'.format(ndata['Date/Time'].count()))
+    #print('labeled weather data:{}'.format(ldata['Date/Time'].count()))
+    #print('unlabelled weather data:{}'.format(udata['Date/Time'].count()))
+    #print('crime data:{}'.format(cdata['date/time'].count()))
+    #print('image data:{}'.format(idata['title'].count()))
+    #print('weather and crime data:{}'.format(wcdata['timestamp'].count()))
+    #print('weather and image data:{}'.format(widata['timestamp'].count()))
+
+
+
 
 if __name__ == '__main__' :
     main()
