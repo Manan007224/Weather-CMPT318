@@ -3,7 +3,8 @@
 ## Objectives
 This repository have the machine-learning workflow for predicting the labels for primary weather data set from GHCN [1]. To be specific 
 
-•	To predict the weather of Vancouver downtown for years 2016 and 2017 hourly for all days in this time-span. The labelling means using a weather-description word such as Clear or Windy to denote the conditions at a certain provided time. 
+
+•	To predict the weather of Vancouver downtown for years 2016 and 2017 hourly for all days in this time-span. The labelling means using a weather-description word such as Clear or Windy to denote the conditions at a certain provided time. 
 
 •	To find the relationship between the weather and occurrence of certain crime-scenes around the lower-mainland Vancouver. 
 
@@ -68,6 +69,7 @@ To Actually understand the data, Please go to the project's wiki. I have documen
 •	Incorrect features extracted from the image are in downtown and color may not best represent rain, snow and pellets.
 
 If you think this to be a challenging problem, Please feel free to fork this rep. and experiment.
+
 
 
 
